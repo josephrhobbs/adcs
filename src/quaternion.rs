@@ -79,7 +79,7 @@ impl Quaternion {
     pub fn from_rotation(cls: &Bound<'_, PyType>, angle: f32, x: f32, y: f32, z: f32) -> Self {
         let c = (angle/2.0).cos();
         let s = (angle/2.0).sin();
-        let a = Self::vector(cls, x, y, z);
+        let a = Self::from_vector(cls, x, y, z);
         let n = a.norm();
         
         Self {
