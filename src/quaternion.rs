@@ -62,7 +62,7 @@ impl Quaternion {
     /// Construct a new quaternion from a vector.
     /// 
     /// The resultant quaternion will have zero scalar part and specified vector part.
-    pub fn vector(_cls: &Bound<'_, PyType>, x: f32, y: f32, z: f32) -> Self {
+    pub fn from_vector(_cls: &Bound<'_, PyType>, x: f32, y: f32, z: f32) -> Self {
         Self {
             w: 0.0,
             x,
