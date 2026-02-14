@@ -3,21 +3,20 @@
 //!
 //! A modern software package for blazingly fast simulation of rigid-body mechanics.
 
+mod angular_velocity;
 mod integrator;
-mod physics;
+mod quaternion;
 mod state;
 
 use pyo3::prelude::*;
 
-pub use physics::{
-    AngularVelocity,
-    Quaternion,
-};
+pub use angular_velocity::AngularVelocity;
+pub use quaternion::Quaternion;
 
 /// A Python module implemented in Rust.
 #[pymodule]
 fn adcs(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    // TODO
+    m.add_class::<Quaternion>()?;
 
     Ok (())
 }
