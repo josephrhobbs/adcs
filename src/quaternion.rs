@@ -11,6 +11,7 @@ use std::ops::{
 };
 
 use pyo3::prelude::*;
+use pyo3::types::PyType;
 
 #[pyclass]
 #[derive(Clone, Copy, Debug)]
@@ -43,6 +44,49 @@ impl Quaternion {
             x,
             y,
             z,
+        }
+    }
+
+    #[classmethod]
+    /// Construct the unit quaternion.
+    pub fn unit(_cls: &Bound<'_, PyType>) -> Self {
+        Self {
+            w: 1.0,
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    #[classmethod]
+    /// Construct a new quaternion from a vector.
+    /// 
+    /// The resultant quaternion will have zero scalar part and specified vector part.
+    pub fn vector(_cls: &Bound<'_, PyType>, x: f32, y: f32, z: f32) -> Self {
+        Self {
+            w: 0.0,
+            x,
+            y,
+            z,
+        }
+    }
+
+    #[classmethod]
+    /// Construct a new quaternion from an angle and axis vector.
+    ///
+    /// Note that the angle should be in radians and the axis should be a unit normal vector.
+    /// If the axis does not have unit norm, then the axis will be rescaled automatically.
+    pub fn from_rotation(cls: &Bound<'_, PyType>, angle: f32, x: f32, y: f32, z: f32) -> Self {
+        let c = (angle/2.0).cos();
+        let s = (angle/2.0).sin();
+        let a = Self::vector(cls, x, y, z);
+        let n = a.norm();
+        
+        Self {
+            w: c,
+            x: s * a.x / n,
+            y: s * a.y / n,
+            z: s * a.z / n,
         }
     }
 
@@ -102,6 +146,18 @@ impl Quaternion {
             self.y,
             self.z,
         )
+    }
+
+    #[getter]
+    /// Get the vector part of this quaternion.
+    fn get_vector(&self) -> (f32, f32, f32) {
+        (self.x, self.y, self.z)
+    }
+    
+    #[getter]
+    /// Get the scalar part of this quaternion.
+    fn get_scalar(&self) -> f32 {
+        self.w
     }
 }
 
