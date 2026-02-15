@@ -13,6 +13,8 @@ use std::ops::{
 use pyo3::prelude::*;
 use pyo3::types::PyType;
 
+use crate::AngularVelocity;
+
 #[pyclass]
 #[derive(Clone, Copy, Debug)]
 /// Quaternion.
@@ -79,25 +81,39 @@ impl Quaternion {
     pub fn from_rotation(cls: &Bound<'_, PyType>, angle: f32, x: f32, y: f32, z: f32) -> Self {
         let c = (angle/2.0).cos();
         let s = (angle/2.0).sin();
-        let a = Self::from_vector(cls, x, y, z);
-        let n = a.norm();
+        let a = Self::from_vector(cls, x, y, z).normalize();
         
         Self {
             w: c,
-            x: s * a.x / n,
-            y: s * a.y / n,
-            z: s * a.z / n,
+            x: s * a.x,
+            y: s * a.y,
+            z: s * a.z,
         }
     }
 
     /// Compute the norm of this quaternion.
-    fn norm(&self) -> f32 {
+    pub fn norm(&self) -> f32 {
         (
             self.w * self.w +
             self.x * self.x +
             self.y * self.y +
             self.z * self.z
         ).sqrt()
+    }
+
+    /// Scale this quaternion by a given scalar.
+    pub fn scale(&self, s: f32) -> Self {
+        Self {
+            w: s * self.w,
+            x: s * self.x,
+            y: s * self.y,
+            z: s * self.z,
+        }
+    }
+
+    /// Return the unit quaternion in the direction of this quaternion.
+    pub fn normalize(&self) -> Self {
+        self.scale(self.norm().powi(-1))
     }
 
     /// Add two quaternions.
@@ -115,15 +131,33 @@ impl Quaternion {
         *self * other
     }
 
+    /// Negate a quaternion.
+    fn __neg__(&self) -> Self {
+        -(*self)
+    }
+
     /// Return the quaternion inverse of this quaternion.
-    fn inv(&self) -> Self {
-        let normsq = self.norm().powi(2);
+    pub fn inv(&self) -> Self {
         Self {
-            w: self.w / normsq,
-            x: -self.x / normsq,
-            y: -self.y / normsq,
-            z: -self.z / normsq,
-        }
+            w: self.w,
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }.scale(self.norm().powi(-2))
+    }
+
+    /// Given an angular velocity vector _in the body frame_, return
+    /// the time derivative of this quaternion.
+    pub fn diff(&self, angular_velocity: AngularVelocity) -> Self {
+        // Lie algebra so(3) element corresponding to angular velocity
+        let omega = Self {
+            w: 0.0,
+            x: angular_velocity.x,
+            y: angular_velocity.y,
+            z: angular_velocity.z,
+        };
+
+        (*self * omega).scale(0.5)
     }
 
     /// Return a human-readable string for this quaternion.
@@ -150,13 +184,13 @@ impl Quaternion {
 
     #[getter]
     /// Get the vector part of this quaternion.
-    fn get_vector(&self) -> (f32, f32, f32) {
+    pub fn get_vector(&self) -> (f32, f32, f32) {
         (self.x, self.y, self.z)
     }
     
     #[getter]
     /// Get the scalar part of this quaternion.
-    fn get_scalar(&self) -> f32 {
+    pub fn get_scalar(&self) -> f32 {
         self.w
     }
 }
@@ -192,7 +226,7 @@ impl Mul<Quaternion> for Quaternion {
 
     fn mul(self, other: Self) -> Self::Output {
         Self {
-            w: self.w * other.w + self.x * other.x + self.y * other.y + self.z * other.z,
+            w: self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
             x: self.w * other.x + other.w * self.x + self.y * other.z - self.z * other.y,
             y: self.w * other.y + other.w * self.y + self.z * other.x - self.x * other.z,
             z: self.w * other.z + other.w * self.z + self.x * other.y - self.y * other.x,

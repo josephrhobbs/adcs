@@ -4,19 +4,45 @@
 //! A modern software package for blazingly fast simulation of rigid-body mechanics.
 
 mod angular_velocity;
+mod inertia;
 mod integrator;
 mod quaternion;
 mod state;
+mod torque;
 
 use pyo3::prelude::*;
 
 pub use angular_velocity::AngularVelocity;
+pub use inertia::Inertia;
+pub use integrator::Integrator;
 pub use quaternion::Quaternion;
+pub use state::State;
+pub use torque::Torque;
 
-/// A Python module implemented in Rust.
 #[pymodule]
-fn adcs(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<Quaternion>()?;
+/// Blazingly fast rigid-body mechanics simulation.
+mod adcs {
+    #[pymodule_export]
+    use crate::AngularVelocity;
 
-    Ok (())
+    #[pymodule_export]
+    use crate::Inertia;
+
+    #[pymodule_export]
+    use crate::Quaternion;
+
+    #[pymodule_export]
+    use crate::State;
+
+    #[pymodule_export]
+    use crate::Torque;
+
+    #[pymodule_export]
+    use crate::integrators;
+}
+
+#[pymodule]
+mod integrators {
+    #[pymodule_export]
+    use crate::integrator::ForwardEuler;
 }
