@@ -53,6 +53,15 @@ impl Torque {
         }
     }
 
+    /// Scale this vector by a given scalar.
+    pub fn scale(&self, s: f32) -> Self {
+        Self {
+            x: s * self.x,
+            y: s * self.y,
+            z: s * self.z,
+        }
+    }
+
     /// Return a human-readable string for this vector.
     fn __str__(&self) -> String {
         format!(

@@ -29,12 +29,18 @@ impl ForwardEuler {
 
     /// Integrate one step.
     pub fn step(&self, state: State) -> State {
-        let (qdot, wdot) = self.dynamics(state);
+        let (qdot, wdot, wddot) = self.dynamics(state);
 
         // Construct new state
         let mut newstate = state.clone();
         newstate.quaternion = (state.quaternion + qdot.scale(self.h)).normalize();
         newstate.angular_velocity = state.angular_velocity + wdot.scale(self.h);
+        if let Some (d) = state.damper {
+            // This is safe because we cloned the original state
+            let mut newd = newstate.damper.unwrap();
+
+            newd.angular_velocity = d.angular_velocity + wddot.scale(self.h);
+        }
 
         newstate
     }

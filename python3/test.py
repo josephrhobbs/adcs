@@ -4,23 +4,31 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-from adcs import AngularVelocity, Inertia, Quaternion, State, Torque
+from adcs import AngularVelocity, Inertia, KaneDamper, Quaternion, State, Torque
 from adcs import integrators as it
 
 plt.rcParams["font.family"] = "Poppins"
 plt.rcParams["font.size"]   = 12
 
-DT = 0.001
-TIME = 20
+DAMPING = 0.1
+
+DT = 0.01
+TIME = 100
 ITERATIONS = int(TIME // DT)
 
 if __name__ == "__main__":
     # Initialize state
-    inertia = Inertia(1, 10, 100, 0, 0, 0)
+    inertia = Inertia(1.00, 1.05, 2, 0, 0, 0)
     state = State(inertia)
+
+    # Set damping
+    state.damper = KaneDamper(
+        Inertia(0.1, 0.1, 0.1, 0.0, 0.0, 0.0),
+        DAMPING,    
+    )
     
     # Set angular velocity
-    state.angular_velocity = AngularVelocity(0.01, 0.5, 0)
+    state.angular_velocity = AngularVelocity(2, 0.3, 0.3)
 
     # Integrate
     fe = it.ForwardEuler(DT)
@@ -32,6 +40,7 @@ if __name__ == "__main__":
         state = fe.step(state)
         nose.append(np.array((state.quaternion * n * state.quaternion.inv()).vector))
         wingtip.append(np.array((state.quaternion * w * state.quaternion.inv()).vector))
+        print(state.angular_velocity)
     nose = np.array(nose)
     wingtip = np.array(wingtip)
 

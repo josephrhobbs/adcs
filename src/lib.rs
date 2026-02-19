@@ -4,6 +4,7 @@
 //! A modern software package for blazingly fast simulation of rigid-body mechanics.
 
 mod angular_velocity;
+mod damper;
 mod inertia;
 mod integrator;
 mod quaternion;
@@ -13,6 +14,7 @@ mod torque;
 use pyo3::prelude::*;
 
 pub use angular_velocity::AngularVelocity;
+pub use damper::KaneDamper;
 pub use inertia::Inertia;
 pub use integrator::Integrator;
 pub use quaternion::Quaternion;
@@ -24,6 +26,9 @@ pub use torque::Torque;
 mod adcs {
     #[pymodule_export]
     use crate::AngularVelocity;
+
+    #[pymodule_export]
+    use crate::KaneDamper;
 
     #[pymodule_export]
     use crate::Inertia;

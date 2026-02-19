@@ -7,6 +7,7 @@ use pyo3::prelude::*;
 
 use crate::{
     AngularVelocity,
+    KaneDamper,
     Inertia,
     Quaternion,
     Torque,
@@ -31,6 +32,10 @@ pub struct State {
     #[pyo3(get, set)]
     /// Input torques (body frame).
     pub torque: Torque,
+
+    #[pyo3(get, set)]
+    /// Kane damper.
+    pub damper: Option<KaneDamper>,
 }
 
 #[pymethods]
@@ -43,6 +48,7 @@ impl State {
             angular_velocity: AngularVelocity::new(0.0, 0.0, 0.0),
             inertia,
             torque: Torque::new(0.0, 0.0, 0.0),
+            damper: None,
         }
     }
 }
