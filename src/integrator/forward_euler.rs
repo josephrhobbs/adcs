@@ -14,14 +14,14 @@ use crate::{
 /// Forward Euler integrator for rigid-body motion.
 pub struct ForwardEuler {
     // Time step.
-    h: f32,
+    h: f64,
 }
 
 #[pymethods]
 impl ForwardEuler {
     #[new]
     /// Construct a new forward Euler integrator.
-    pub fn new(h: f32) -> Self {
+    pub fn new(h: f64) -> Self {
         Self {
             h,
         }

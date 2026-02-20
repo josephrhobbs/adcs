@@ -29,7 +29,7 @@ pub struct KaneDamper {
 
     #[pyo3(get, set)]
     /// Damping coefficient.
-    pub coefficient: f32,
+    pub coefficient: f64,
 
     #[pyo3(get, set)]
     /// Damper angular velocity.
@@ -45,7 +45,7 @@ impl KaneDamper {
     /// This is because the Kane damper model of energy dissipation conceptually
     /// models the damper as a solid sphere.  Because the inertia of a sphere is equal
     /// about any axis, a positive scalar is sufficient.
-    pub fn new(inertia: f32, coefficient: f32) -> Self {
+    pub fn new(inertia: f64, coefficient: f64) -> Self {
         let inertia = Inertia::new(
             inertia,
             inertia,

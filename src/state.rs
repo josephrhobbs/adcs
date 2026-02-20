@@ -19,7 +19,7 @@ use crate::{
 pub struct State {
     #[pyo3(get, set)]
     /// Simulation time.
-    pub time: f32,
+    pub time: f64,
 
     #[pyo3(get, set)]
     /// Attitude (rotation from body frame to inertial frame).

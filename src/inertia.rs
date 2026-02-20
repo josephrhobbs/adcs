@@ -25,29 +25,29 @@ use pyo3::prelude::*;
 /// ```
 pub struct Inertia {
     #[pyo3(get, set)]
-    pub j1: f32,
+    pub j1: f64,
 
     #[pyo3(get, set)]
-    pub j2: f32,
+    pub j2: f64,
 
     #[pyo3(get, set)]
-    pub j3: f32,
+    pub j3: f64,
 
     #[pyo3(get, set)]
-    pub j4: f32,
+    pub j4: f64,
 
     #[pyo3(get, set)]
-    pub j5: f32,
+    pub j5: f64,
 
     #[pyo3(get, set)]
-    pub j6: f32,
+    pub j6: f64,
 }
 
 #[pymethods]
 impl Inertia {
     #[new]
     /// Construct a new inertia tensor.
-    pub fn new(j1: f32, j2: f32, j3: f32, j4: f32, j5: f32, j6: f32) -> Self {
+    pub fn new(j1: f64, j2: f64, j3: f64, j4: f64, j5: f64, j6: f64) -> Self {
         Self {
             j1,
             j2,

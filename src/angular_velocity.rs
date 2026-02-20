@@ -25,22 +25,22 @@ use crate::{
 pub struct AngularVelocity {
     #[pyo3(get, set)]
     /// X coordinate.
-    pub x: f32,
+    pub x: f64,
 
     #[pyo3(get, set)]
     /// Y coordinate.
-    pub y: f32,
+    pub y: f64,
 
     #[pyo3(get, set)]
     /// Z coordinate.
-    pub z: f32,
+    pub z: f64,
 }
 
 #[pymethods]
 impl AngularVelocity {
     #[new]
     /// Construct a new angular velocity vector.
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self {
             x,
             y,
@@ -68,7 +68,7 @@ impl AngularVelocity {
     }
 
     /// Scale this vector by a given scalar.
-    pub fn scale(&self, s: f32) -> Self {
+    pub fn scale(&self, s: f64) -> Self {
         Self {
             x: s * self.x,
             y: s * self.y,

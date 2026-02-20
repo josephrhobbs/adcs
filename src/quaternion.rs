@@ -21,26 +21,26 @@ use crate::AngularVelocity;
 pub struct Quaternion {
     #[pyo3(get, set)]
     /// Scalar part of the quaternion.
-    pub w: f32,
+    pub w: f64,
 
     #[pyo3(get, set)]
     /// Vector part of the quaternion, X coordinate.
-    pub x: f32,
+    pub x: f64,
 
     #[pyo3(get, set)]
     /// Vector part of the quaternion, Y coordinate.
-    pub y: f32,
+    pub y: f64,
 
     #[pyo3(get, set)]
     /// Vector part of the quaternion, Z coordinate.
-    pub z: f32,
+    pub z: f64,
 }
 
 #[pymethods]
 impl Quaternion {
     #[new]
     /// Construct a new quaternion.
-    pub fn new(w: f32, x: f32, y: f32, z: f32) -> Self {
+    pub fn new(w: f64, x: f64, y: f64, z: f64) -> Self {
         Self {
             w,
             x,
@@ -64,7 +64,7 @@ impl Quaternion {
     /// Construct a new quaternion from a vector.
     /// 
     /// The resultant quaternion will have zero scalar part and specified vector part.
-    pub fn from_vector(_cls: &Bound<'_, PyType>, x: f32, y: f32, z: f32) -> Self {
+    pub fn from_vector(_cls: &Bound<'_, PyType>, x: f64, y: f64, z: f64) -> Self {
         Self {
             w: 0.0,
             x,
@@ -78,7 +78,7 @@ impl Quaternion {
     ///
     /// Note that the angle should be in radians and the axis should be a unit normal vector.
     /// If the axis does not have unit norm, then the axis will be rescaled automatically.
-    pub fn from_rotation(cls: &Bound<'_, PyType>, angle: f32, x: f32, y: f32, z: f32) -> Self {
+    pub fn from_rotation(cls: &Bound<'_, PyType>, angle: f64, x: f64, y: f64, z: f64) -> Self {
         let c = (angle/2.0).cos();
         let s = (angle/2.0).sin();
         let a = Self::from_vector(cls, x, y, z).normalize();
@@ -92,7 +92,7 @@ impl Quaternion {
     }
 
     /// Compute the norm of this quaternion.
-    pub fn norm(&self) -> f32 {
+    pub fn norm(&self) -> f64 {
         (
             self.w * self.w +
             self.x * self.x +
@@ -102,7 +102,7 @@ impl Quaternion {
     }
 
     /// Scale this quaternion by a given scalar.
-    pub fn scale(&self, s: f32) -> Self {
+    pub fn scale(&self, s: f64) -> Self {
         Self {
             w: s * self.w,
             x: s * self.x,
@@ -184,13 +184,13 @@ impl Quaternion {
 
     #[getter]
     /// Get the vector part of this quaternion.
-    pub fn get_vector(&self) -> (f32, f32, f32) {
+    pub fn get_vector(&self) -> (f64, f64, f64) {
         (self.x, self.y, self.z)
     }
     
     #[getter]
     /// Get the scalar part of this quaternion.
-    pub fn get_scalar(&self) -> f32 {
+    pub fn get_scalar(&self) -> f64 {
         self.w
     }
 }

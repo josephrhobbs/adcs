@@ -14,14 +14,14 @@ use crate::{
 /// Fourth-order Runge-Kutta integrator for rigid-body motion.
 pub struct RungeKutta4 {
     // Time step.
-    h: f32,
+    h: f64,
 }
 
 #[pymethods]
 impl RungeKutta4 {
     #[new]
     /// Construct a new fourth-order Runge-Kutta integrator.
-    pub fn new(h: f32) -> Self {
+    pub fn new(h: f64) -> Self {
         Self {
             h,
         }
