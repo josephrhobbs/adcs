@@ -50,4 +50,7 @@ mod adcs {
 mod integrators {
     #[pymodule_export]
     use crate::integrator::ForwardEuler;
+
+    #[pymodule_export]
+    use crate::integrator::RungeKutta4;
 }

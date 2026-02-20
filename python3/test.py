@@ -10,10 +10,11 @@ from adcs import integrators as it
 plt.rcParams["font.family"] = "Poppins"
 plt.rcParams["font.size"]   = 12
 
-DAMPING = 0.1
+INERTIA = 0.1
+DAMPING = 0.05
 
 DT = 0.01
-TIME = 100
+TIME = 10
 ITERATIONS = int(TIME // DT)
 
 if __name__ == "__main__":
@@ -23,21 +24,21 @@ if __name__ == "__main__":
 
     # Set damping
     state.damper = KaneDamper(
-        Inertia(0.1, 0.1, 0.1, 0.0, 0.0, 0.0),
+        INERTIA,
         DAMPING,    
     )
     
     # Set angular velocity
-    state.angular_velocity = AngularVelocity(2, 0.3, 0.3)
+    state.angular_velocity = AngularVelocity(10, 0.7, 0.7)
 
     # Integrate
-    fe = it.ForwardEuler(DT)
+    rk = it.RungeKutta4(DT)
     n = Quaternion.from_vector(-1, 0, 0)
     w = Quaternion.from_vector(0, 1, 0)
     nose = []
     wingtip = []
     for _ in range(ITERATIONS):
-        state = fe.step(state)
+        state = rk.step(state)
         nose.append(np.array((state.quaternion * n * state.quaternion.inv()).vector))
         wingtip.append(np.array((state.quaternion * w * state.quaternion.inv()).vector))
         print(state.angular_velocity)

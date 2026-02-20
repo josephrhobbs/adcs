@@ -4,6 +4,7 @@
 //! Integrator abstraction.
 
 mod forward_euler;
+mod runge_kutta;
 
 use crate::{
     AngularVelocity,
@@ -13,6 +14,7 @@ use crate::{
 };
 
 pub use forward_euler::ForwardEuler;
+pub use runge_kutta::RungeKutta4;
 
 /// Numerical integrator for Ordinary Differential Equations (ODEs).
 pub trait Integrator {
