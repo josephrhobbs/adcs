@@ -18,15 +18,19 @@ use crate::{
 /// Rigid-body state.
 pub struct State {
     #[pyo3(get, set)]
-    /// Attitude.
+    /// Simulation time.
+    pub time: f32,
+
+    #[pyo3(get, set)]
+    /// Attitude (rotation from body frame to inertial frame).
     pub quaternion: Quaternion, 
 
     #[pyo3(get, set)]
-    /// Angular velocity.
+    /// Angular velocity (body frame).
     pub angular_velocity: AngularVelocity,
 
     #[pyo3(get, set)]
-    /// Rigid-body inertia.
+    /// Rigid-body inertia (body frame).
     pub inertia: Inertia,
 
     #[pyo3(get, set)]
@@ -49,6 +53,7 @@ impl State {
             inertia,
             torque: Torque::new(0.0, 0.0, 0.0),
             damper: None,
+            time: 0.0,
         }
     }
 }

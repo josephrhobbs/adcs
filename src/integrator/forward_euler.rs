@@ -40,7 +40,11 @@ impl ForwardEuler {
             let mut newd = newstate.damper.unwrap();
 
             newd.angular_velocity = d.angular_velocity + wddot.scale(self.h);
+            newstate.damper = Some (newd);
         }
+    
+        // Step time
+        newstate.time = state.time + self.h;
 
         newstate
     }

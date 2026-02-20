@@ -41,6 +41,7 @@ impl RungeKutta4 {
             let mut newd = k2.damper.unwrap();
 
             newd.angular_velocity = d.angular_velocity + wddot1.scale(0.5 * self.h);
+            k2.damper = Some (newd);
         }
         let (qdot2, wdot2, wddot2) = self.dynamics(k2);
 
@@ -53,6 +54,7 @@ impl RungeKutta4 {
             let mut newd = k3.damper.unwrap();
 
             newd.angular_velocity = d.angular_velocity + wddot2.scale(0.5 * self.h);
+            k3.damper = Some (newd);
         }
         let (qdot3, wdot3, wddot3) = self.dynamics(k3);
 
@@ -65,6 +67,7 @@ impl RungeKutta4 {
             let mut newd = k4.damper.unwrap();
 
             newd.angular_velocity = d.angular_velocity + wddot3.scale(self.h);
+            k4.damper = Some (newd);
         }
         let (qdot4, wdot4, wddot4) = self.dynamics(k4);
 
@@ -82,7 +85,11 @@ impl RungeKutta4 {
             let mut newd = newstate.damper.unwrap();
 
             newd.angular_velocity = d.angular_velocity + wddot.scale(self.h);
+            newstate.damper = Some (newd);
         }
+
+        // Step time
+        newstate.time = state.time + self.h;
 
         newstate
     }

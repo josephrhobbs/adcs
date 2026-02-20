@@ -1,7 +1,7 @@
 //! ADCS
 //! Copyright (c) 2026 Joseph Hobbs
 //!
-//! Torque type.
+//! Angular Momentum type.
 
 use std::ops::{
     Add,
@@ -12,14 +12,18 @@ use std::ops::{
 use pyo3::prelude::*;
 use pyo3::types::PyType;
 
-use crate::Quaternion;
+use crate::{
+    AngularVelocity,
+    Inertia,
+    Quaternion,
+};
 
 #[pyclass]
 #[derive(Clone, Copy, Debug)]
-/// Torque vector.
+/// Angular momentum vector.
 ///
-/// Note that torque vectors are, by default, given in the _body frame_.
-pub struct Torque {
+/// Note that angular momentum vectors are, by default, given in the _body frame_.
+pub struct AngularMomentum {
     #[pyo3(get, set)]
     /// X coordinate.
     pub x: f32,
@@ -34,9 +38,9 @@ pub struct Torque {
 }
 
 #[pymethods]
-impl Torque {
+impl AngularMomentum {
     #[new]
-    /// Construct a new torque vector.
+    /// Construct a new angular momentum vector.
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self {
             x,
@@ -52,6 +56,21 @@ impl Torque {
             x: 0.0,
             y: 0.0,
             z: 0.0,
+        }
+    }
+
+    #[classmethod]
+    /// Construct an angular momentum vector from an inertia tensor
+    /// and an angular velocity.
+    pub fn product(
+        _cls: &Bound<'_, PyType>,
+        inertia: Inertia,
+        angular_velocity: AngularVelocity,
+    ) -> Self {
+        Self {
+            x: inertia.j1*angular_velocity.x + inertia.j6*angular_velocity.y + inertia.j5*angular_velocity.z,
+            y: inertia.j6*angular_velocity.x + inertia.j2*angular_velocity.y + inertia.j4*angular_velocity.z,
+            z: inertia.j5*angular_velocity.x + inertia.j4*angular_velocity.y + inertia.j3*angular_velocity.z,
         }
     }
 
@@ -96,31 +115,31 @@ impl Torque {
     /// Return a Pythonic representation of this vector.
     fn __repr__(&self) -> String {
         format!(
-            "Torque({}, {}, {})",
+            "AngularMomentum({}, {}, {})",
             self.x,
             self.y,
             self.z,
         )
     }
 
-    /// Add two torque vectors.
+    /// Add two angular momentum vectors.
     fn __add__(&self, other: Self) -> Self {
         *self + other
     }
 
-    /// Subtract two torque vectors.
+    /// Subtract two angular momentum vectors.
     fn __sub__(&self, other: Self) -> Self {
         *self - other
     }
 
-    /// Negate an torque vector.
+    /// Negate an angular momentum vector.
     fn __neg__(&self) -> Self {
         -(*self)
     }
 }
 
-impl Add<Torque> for Torque {
-    type Output = Torque;
+impl Add<AngularMomentum> for AngularMomentum {
+    type Output = AngularMomentum;
 
     fn add(self, other: Self) -> Self::Output {
         Self {
@@ -131,8 +150,8 @@ impl Add<Torque> for Torque {
     }
 }
 
-impl Sub<Torque> for Torque {
-    type Output = Torque;
+impl Sub<AngularMomentum> for AngularMomentum {
+    type Output = AngularMomentum;
 
     fn sub(self, other: Self) -> Self::Output {
         Self {
@@ -143,8 +162,8 @@ impl Sub<Torque> for Torque {
     }
 }
 
-impl Neg for Torque {
-    type Output = Torque;
+impl Neg for AngularMomentum {
+    type Output = AngularMomentum;
     
     fn neg(self) -> Self::Output {
         Self {

@@ -13,6 +13,7 @@ use pyo3::prelude::*;
 
 use crate::{
     Inertia,
+    Quaternion,
     Torque,
 };
 
@@ -44,6 +45,25 @@ impl AngularVelocity {
             x,
             y,
             z,
+        }
+    }
+
+    /// Rotate this vector by a given unit quaternion.
+    pub fn rotate(&self, q: Quaternion) -> Self {
+        let v = Quaternion::new(
+            0.0,
+            self.x,
+            self.y,
+            self.z,
+        );
+
+        // Rotate
+        let rotated = q * v * q.inv();
+
+        Self {
+            x: rotated.x,
+            y: rotated.y,
+            z: rotated.z,
         }
     }
 
